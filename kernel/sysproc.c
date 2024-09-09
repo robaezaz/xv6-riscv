@@ -12,7 +12,7 @@ sys_exit(void)
   int n;
   argint(0, &n);
   exit(n);
-  return 0;  // not reached
+  return 0; // not reached
 }
 
 uint64
@@ -43,7 +43,7 @@ sys_sbrk(void)
 
   argint(0, &n);
   addr = myproc()->sz;
-  if(growproc(n) < 0)
+  if (growproc(n) < 0)
     return -1;
   return addr;
 }
@@ -55,12 +55,14 @@ sys_sleep(void)
   uint ticks0;
 
   argint(0, &n);
-  if(n < 0)
+  if (n < 0)
     n = 0;
   acquire(&tickslock);
   ticks0 = ticks;
-  while(ticks - ticks0 < n){
-    if(killed(myproc())){
+  while (ticks - ticks0 < n)
+  {
+    if (killed(myproc()))
+    {
       release(&tickslock);
       return -1;
     }
@@ -90,4 +92,29 @@ sys_uptime(void)
   xticks = ticks;
   release(&tickslock);
   return xticks;
+}
+
+int sys_getppid(void)
+{
+  return myproc()->parent->pid;
+}
+
+#include "proc.h"
+
+int sys_getancestor(void)
+{
+  int n;
+  struct proc *p = myproc();
+
+  // Obtener el parámetro
+  if (argint(0, &n) < 0)
+    return -1;
+
+  for (int i = 0; i < n; i++)
+  {
+    if (p->parent == 0) // Si no hay más ancestros
+      return -1;
+    p = p->parent;
+  }
+  return p->pid;
 }
