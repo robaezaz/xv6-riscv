@@ -96,7 +96,6 @@ enum procstate
 struct proc
 {
   struct spinlock lock;
-  int ARRIVAL_TIME;
 
   // p->lock must be held when using these:
   enum procstate state; // Process state
@@ -119,4 +118,5 @@ struct proc
   char name[16];               // Process name (debugging)
 };
 
-int argint(int n, int *ip);
+// Agregar el proceso getancestor
+int getancestor(uint64);

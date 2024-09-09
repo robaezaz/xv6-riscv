@@ -19,11 +19,11 @@ int mkdir(const char *);
 int chdir(const char *);
 int dup(int);
 int getpid(void);
-int getppid(void);      // llamada nueva para tarea 1
-int getancestor(int n); // llamada nueva para tarea 1
 char *sbrk(int);
 int sleep(int);
 int uptime(void);
+int getppid(void);
+int getancestor(int n);
 
 // ulib.c
 int stat(const char *, struct stat *);

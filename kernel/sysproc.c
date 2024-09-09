@@ -94,27 +94,52 @@ sys_uptime(void)
   return xticks;
 }
 
-int sys_getppid(void)
+// creación funciones getppid y getancestor
+uint64
+sys_getppid(void)
 {
-  return myproc()->parent->pid;
+  struct proc *p = myproc();
+  return p->parent->pid;
 }
 
-#include "proc.h"
-
-int sys_getancestor(void)
+uint64
+sys_getancestor(void)
 {
-  int n;
+  int n = 0;
+  // obtiene el valor de n desde la llamada al sistema
+  argint(0, &n);
+
+  // proceso actual
   struct proc *p = myproc();
 
-  // Obtener el parámetro
-  if (argint(0, &n) < 0)
-    return -1;
-
-  for (int i = 0; i < n; i++)
+  // si no hay proceso actual, devolver -1 como error
+  if (p == 0)
   {
-    if (p->parent == 0) // Si no hay más ancestros
-      return -1;
-    p = p->parent;
+    return -1;
   }
-  return p->pid;
+
+  // Verifica el valor de n para determinar el ancestro que se está solicitando
+  switch (n)
+  {
+  case 0:
+    // Si n es 0, devuelve el ID del proceso actual
+    return p->pid;
+  case 1:
+    // Si n es 1, devolver el ID del proceso padre
+    if (p->parent)
+      return p->parent->pid;
+    else
+      // Si no hay padre, retorna -1, para indicar que no se encontró el ancestro
+      return -1;
+  case 2:
+    // Si n es 2, devolver el ID del proceso abuelo
+    if (p->parent && p->parent->parent)
+      return p->parent->parent->pid;
+    else
+      // Si no hay abuelo, retorna -1.
+      return -1;
+  default:
+    // Para cualquier otro valor de n, retorna -1 ya que no hay tantos ancestros
+    return -1;
+  }
 }

@@ -2,7 +2,6 @@
 #include "kernel/stat.h"
 #include "kernel/fcntl.h"
 #include "user/user.h"
-#include "syscall.h"
 
 //
 // wrapper so that it's OK if main() does not call exit().
@@ -146,14 +145,4 @@ void *
 memcpy(void *dst, const void *src, uint n)
 {
   return memmove(dst, src, n);
-}
-
-int getppid(void)
-{
-  return syscall(SYS_getppid);
-}
-
-int getancestor(int n)
-{
-  return syscall(SYS_getancestor, n);
 }

@@ -712,3 +712,20 @@ void procdump(void)
     printf("\n");
   }
 }
+
+// Se incluye función getancestor
+
+int getancestor(uint64 n)
+{
+  struct proc *p = myproc();
+  while (n > 0 && p->parent)
+  {
+    p = p->parent;
+    n--;
+  }
+  if (n > 0)
+  {
+    return -1;
+  }
+  return p->pid;
+};
