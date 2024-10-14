@@ -12,7 +12,7 @@ sys_exit(void)
   int n;
   argint(0, &n);
   exit(n);
-  return 0;  // not reached
+  return 0; // not reached
 }
 
 uint64
@@ -43,7 +43,7 @@ sys_sbrk(void)
 
   argint(0, &n);
   addr = myproc()->sz;
-  if(growproc(n) < 0)
+  if (growproc(n) < 0)
     return -1;
   return addr;
 }
@@ -55,12 +55,14 @@ sys_sleep(void)
   uint ticks0;
 
   argint(0, &n);
-  if(n < 0)
+  if (n < 0)
     n = 0;
   acquire(&tickslock);
   ticks0 = ticks;
-  while(ticks - ticks0 < n){
-    if(killed(myproc())){
+  while (ticks - ticks0 < n)
+  {
+    if (killed(myproc()))
+    {
       release(&tickslock);
       return -1;
     }
@@ -90,4 +92,33 @@ sys_uptime(void)
   xticks = ticks;
   release(&tickslock);
   return xticks;
+}
+
+extern int set_priority(int pid, int priority);
+extern int set_boost(int pid, int boost);
+
+uint64
+sys_setpriority(void)
+{
+  int pid, priority;
+
+  // Extrae argumentos
+  argint(0, &pid);
+  argint(1, &priority);
+
+  // Llamar a la función interna del kernel
+  return (uint64)set_priority(pid, priority);
+}
+
+uint64
+sys_setboost(void)
+{
+  int pid, boost;
+
+  // Extrae los argumentos
+  argint(0, &pid);
+  argint(1, &boost);
+
+  // Llamar a la función interna del kernel
+  return (uint64)set_boost(pid, boost);
 }
