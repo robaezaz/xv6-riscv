@@ -736,6 +736,7 @@ int set_priority(int pid, int priority)
   release(&ptable.lock);
   return -1; // PID no encontrado
 }
+
 int set_boost(int pid, int boost)
 {
   struct proc *p;

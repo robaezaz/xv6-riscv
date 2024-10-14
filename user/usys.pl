@@ -36,3 +36,8 @@ entry("getpid");
 entry("sbrk");
 entry("sleep");
 entry("uptime");
+entry("setpriority"); #agregar las nuevas llamadas al sistema en forma de stubs
+entry("setboost");
+
+
+
