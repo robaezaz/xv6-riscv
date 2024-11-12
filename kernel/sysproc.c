@@ -5,6 +5,7 @@
 #include "memlayout.h"
 #include "spinlock.h"
 #include "proc.h"
+#include "syscall.h"
 
 uint64
 sys_exit(void)
@@ -12,7 +13,7 @@ sys_exit(void)
   int n;
   argint(0, &n);
   exit(n);
-  return 0;  // not reached
+  return 0; // not reached
 }
 
 uint64
@@ -43,7 +44,7 @@ sys_sbrk(void)
 
   argint(0, &n);
   addr = myproc()->sz;
-  if(growproc(n) < 0)
+  if (growproc(n) < 0)
     return -1;
   return addr;
 }
@@ -55,12 +56,14 @@ sys_sleep(void)
   uint ticks0;
 
   argint(0, &n);
-  if(n < 0)
+  if (n < 0)
     n = 0;
   acquire(&tickslock);
   ticks0 = ticks;
-  while(ticks - ticks0 < n){
-    if(killed(myproc())){
+  while (ticks - ticks0 < n)
+  {
+    if (killed(myproc()))
+    {
       release(&tickslock);
       return -1;
     }
@@ -90,4 +93,25 @@ sys_uptime(void)
   xticks = ticks;
   release(&tickslock);
   return xticks;
+}
+
+// Declarar las nuevas funciones como externas
+extern int mprotect(void *addr, int len);
+extern int munprotect(void *addr, int len);
+
+uint64 sys_mprotect(void)
+{
+  uint64 addr;
+  int len;
+  argaddr(0, &addr); // Obtener el primer argumento sin esperar retorno
+  argint(1, &len);   // Obtener el segundo argumento sin esperar retorno
+  return mprotect((void *)addr, len);
+}
+uint64 sys_munprotect(void)
+{
+  uint64 addr;
+  int len;
+  argaddr(0, &addr); // Obtener el primer argumento sin esperar retorno
+  argint(1, &len);   // Obtener el segundo argumento sin esperar retorno
+  return munprotect((void *)addr, len);
 }
